@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BinarySearchTree.Console/BinarySearchTree.Console.csproj" />
+  <Project Path="BinarySearchTree.Core/BinarySearchTree.Core.csproj" />
+</Solution>
