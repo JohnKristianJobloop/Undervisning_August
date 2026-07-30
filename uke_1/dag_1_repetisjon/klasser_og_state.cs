@@ -30,6 +30,8 @@ var person2 = new ImmutablePerson("Terje", 44);
 person2 = person2 with {Age = person2.Age + 1};
 Console.WriteLine(person2.ToString());
 
+person3 = new ImmutablePerson(person2);
+
 
 //En klasse representerer egentlig bare en blueprint, eller en oppskrift over, hvordan du vil en datatype skal se ut. 
 //That's it. 

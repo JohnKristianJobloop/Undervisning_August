@@ -13,6 +13,9 @@ numbers[index] = 52;
 BinarySearchTree<int> tree = new();
 
 
+BinarySearchTree<float> floatTree = new();
+
+BinarySearchTree<string> stringTree = new();
 foreach(var num in numbers) tree.Insert(num);
 
 var stopwatch = Stopwatch.StartNew();
