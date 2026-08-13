@@ -27,11 +27,23 @@ Console.WriteLine("Listening on localhost:8080");
 //et program som aldri blir ferdig.
 while (true)
 {
-    //AcceptTcpClient BLOKKERER tråden til noen faktisk kobler seg til.
-    //Det høres ille ut, men her er det riktig: denne tråden har uansett
-    //ingenting annet å gjøre enn å vente på neste kunde.
+    //Her venter vi på at noen faktisk skal koble seg til.
+    //Fordi vi awaiter, BLOKKERER vi ingen tråd mens vi venter. Tråden gis
+    //tilbake til thread poolen, og runtime plukker oss opp igjen først når
+    //en client faktisk dukker opp. Ingen tråd står og sover på en tom port.
+    //
+    //Den synkrone varianten finnes også, AcceptTcpClient() uten Async.
+    //Den holder på tråden helt til noen kobler seg til. For akkurat denne
+    //loopen er forskjellen liten, tråden har jo ingenting annet å gjøre.
+    //Men det er dårlig vane: poenget med async er at "å vente" ikke skal
+    //koste en tråd, og det er tråder som er den dyre ressursen i en server.
+    //
+    //Legg forresten merke til at vi kan bruke await her helt uten en
+    //Main-metode. Top-level statements blir kompilert om til en
+    //"static async Task Main" bak kulissene.
+    //
     //Hver client vi får er én forbindelse, altså én "samtale".
-    var client = listener.AcceptTcpClient();
+    var client = await listener.AcceptTcpClientAsync();
 
     //Her er hele poenget med async i en server.
     //Vi kaller HandleClient, men vi AWAITER IKKE. Vi kaster Tasken i en discard (_).
