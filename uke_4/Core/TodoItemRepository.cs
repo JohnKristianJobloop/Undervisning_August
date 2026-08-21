@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Core;
 
 
@@ -9,7 +7,7 @@ namespace Core;
 //Det er helt greit i undervisning og i tester, og det er nettopp derfor
 //interfacet er verdt bryet: den dagen vi bytter dette ut med SQL, er denne
 //filen den ENESTE som må skrives om.
-public class TodoItemRepository : ITodoItemRepository
+public class TodoItemRepository
 {
     //"Databasen" vår. [] er en collection expression (C# 12), kortform for
     //new List<TodoItem>().

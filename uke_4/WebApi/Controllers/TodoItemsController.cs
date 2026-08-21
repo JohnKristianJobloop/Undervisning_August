@@ -1,3 +1,4 @@
+namespace WebApi.Controllers;
 using Core;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +34,7 @@ public class TodoItemsController(ITodoItemRepository repository, TodoItemBuilder
     //Her gjør vi teknisk sett også en fyfy. Vi lekker domenemodellen (hvordan dataen er representert internt i programmet)
     //ut av webapiet vårt. Best practise er å også lage DTO modeller for data UT, på samme måte som data INN. 
     [HttpGet]
-    public IEnumerable<TodoItem> Get() => repository.Get();
+    public async Task<List<TodoItem>> Get() => await repository.GetAsync();
     //Samme som metoden over, bare uten expressions
     /*
     * public IEnumerable<TodoItem> Get(){
@@ -53,7 +54,7 @@ public class TodoItemsController(ITodoItemRepository repository, TodoItemBuilder
     //sjekker at resultatet ikke er null, og gir oss variabelen
     //"item" som vi kan bruke videre i uttrykket.
     [HttpGet("{id:guid}")]
-    public IActionResult Get(Guid id) => repository.Get(id) is TodoItem item ? Ok(item) : NotFound($"Item with id {id} not in the repository");
+    public async Task<IActionResult> Get(Guid id) => await repository.GetAsync(id) is TodoItem item ? Ok(item) : NotFound($"Item with id {id} not in the repository");
     //Samme som metoden over, bare uten expression og patternmatching
     /*
     * public IActionResult Get(Guid id){
@@ -72,22 +73,22 @@ public class TodoItemsController(ITodoItemRepository repository, TodoItemBuilder
     //Legg merke til at vi tar imot DTO-en, ikke TodoItem: klienten får dermed
     //ingen mulighet til å bestemme Id, CreatedAt eller CompletedAt selv.
     [HttpPost]
-    public IActionResult Post([FromBody] PostTodoDTO dto)
+    public async Task<IActionResult> Post([FromBody] PostTodoDTO dto)
     {
         //Oversett fra transportformat til domenemodell
         var item = builder.FromDto(dto);
         //Lagre item objektet. Merk hvor lite denne metoden egentlig gjør selv.
-        repository.Add(item);
+        await repository.AddAsync(item);
 
         //201 Created, ikke 200 OK. Created setter i tillegg en Location-header
         //som forteller klienten HVOR den nyopprettede ressursen ligger.
         //
         //En ting å merke seg her:
-        //  - CreatedAtAction(nameof(Get), new { id = item.Id }, item) er et mer ry da bygger ruteren URL-en for oss, og den
+        //  - CreatedAtAction(nameof(GetAsync), new { id = item.Id }, item) er et mer ry da bygger ruteren URL-en for oss, og den
         //    fortsetter å stemme selv om vi endrer [Route] senere.
         return Created($"/TodoItems/{item.Id}", item);
         //Et alternativ til denne returtypen her er å bruke en CreatedAtAction type, som kan bygge returntypen selv:
-        //return CreatedAtAction(nameof(Get), new { id = item.Id }, item) som automatisk bygger ruten for å finne itemen for oss. 
+        //return CreatedAtAction(nameof(GetAsync), new { id = item.Id }, item) som automatisk bygger ruten for å finne itemen for oss. 
     }
 
     //På torsdag skal vi implementere følgende:

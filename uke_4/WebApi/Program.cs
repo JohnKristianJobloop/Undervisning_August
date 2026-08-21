@@ -5,6 +5,7 @@
 
 //Konfigurering og oppsett av App
 using Core;
+using WebApi.Extensions;
 
 //WebApplicationBuilder samler tre ting på ett sted: konfigurasjon
 //(appsettings.json, miljøvariabler, kommandolinjeargumenter), logging, og
@@ -16,6 +17,16 @@ var builder = WebApplication.CreateBuilder(args);
 //OpenAPI leser controllerne våre med refleksjon og genererer en maskinlesbar
 //beskrivelse av API-et. Det er den beskrivelsen Swagger-siden tegner opp.
 builder.Services.AddOpenApi();
+
+//Her kobles databasen på. Hele oppsettet ligger i
+//Extensions/TodoItemsContextServiceCollectionExtension.cs, slik at denne
+//filen fortsatt kan leses som en oppskrift.
+//builder.Configuration sendes med fordi det er der connection stringen bor
+//(appsettings.json), ikke i koden.
+//Registreringen sier "ITodoItemRepository = TodoItemsContext", og fra det
+//øyeblikket lagres todoene i SQLite i stedet for i en liste i minnet.
+//Ingenting i controlleren trengte å endres. Det er Dependency Inversion i praksis.
+builder.Services.AddTodoItemDbContext(builder.Configuration);
 
 //Her kobles interface til implementasjon i
 //Dependency Injection: "når noen ber om en ITodoItemRepository, gi dem en
@@ -37,7 +48,7 @@ builder.Services.AddOpenApi();
 //concurrent-collection, eller rett og slett en ekte database.
 //
 //Vi skal se på concurrency og asynkronitet på torsdag. 
-builder.Services.AddSingleton<ITodoItemRepository, TodoItemRepository>();
+//builder.Services.AddSingleton<ITodoItemRepository, TodoItemRepository>();
 
 //Builderen har ingen tilstand å ta vare på, så det koster oss ingenting å
 //lage en ny per bruk.

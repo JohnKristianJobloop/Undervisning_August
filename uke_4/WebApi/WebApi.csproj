@@ -8,6 +8,36 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+
+    <!--
+      Design er verktøykassa til EF Core, og den brukes bare på utviklermaskinen.
+      Det er denne pakken som kan bygge en dyp modell av databasen ved å lese
+      DbContexten og entitetsklassene våre med refleksjon: tabeller, kolonner,
+      datatyper, nøkler og relasjoner. Den kan i tillegg skrive C#-kode ut fra
+      den modellen, og det er nettopp det kommandolinjeverktøyet dotnet-ef ber
+      den om når vi kjører "dotnet ef migrations add".
+
+      PrivateAssets="all" betyr at pakken stopper her: den følger ikke med
+      videre til noen som refererer prosjektet vårt, og den havner ikke i det
+      publiserte produktet. Den hører hjemme i utvikling, ikke i drift.
+
+      Selve dotnet-ef er ikke en NuGet-pakke, men et .NET-verktøy låst til
+      prosjektet i dotnet-tools.json. Hentes med "dotnet tool restore".
+    -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+    <!--
+      Provideren. Dette er delen som faktisk kan snakke SQLite, og som
+      oversetter LINQ-spørringene våre til SQLite sin dialekt av SQL.
+      Denne blir med i det ferdige produktet, i motsetning til Design.
+      Skal vi over på PostgreSQL, byttes denne mot Npgsql.EntityFrameworkCore.PostgreSQL,
+      og UseSqlite mot UseNpgsql i Extensions-mappa. Ikke noe annet endres.
+    -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
   </ItemGroup>
 

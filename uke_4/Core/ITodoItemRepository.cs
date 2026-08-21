@@ -15,22 +15,28 @@ namespace Core;
 public interface ITodoItemRepository
 {
     TodoItem Add(TodoItem item);
+    Task<TodoItem> AddAsync(TodoItem item);
 
     //bool, ikke void: kalleren må få vite om noe faktisk ble slettet.
     //Det er den forskjellen som avgjør om endepunktet skal svare 204 eller 404.
     bool Remove(Guid id);
+    Task<bool> RemoveAsync(Guid id);
 
     //Overloading: to metoder med samme navn, men ulik signatur.
     //Get() henter alle, Get(id) henter én bestemt.
     IEnumerable<TodoItem> Get();
+    Task<List<TodoItem>> GetAsync();
 
     //? betyr at metoden har LOV til å returnere null. Med
     //<Nullable>enable</Nullable> i csproj advarer kompilatoren kalleren
     //hvis den glemmer å håndtere det.
     //Fravær av ? er dermed et løfte: "du får aldri null herfra".
     TodoItem? Get(Guid id);
+    Task<TodoItem?> GetAsync(Guid id);
     
     IEnumerable<TodoItem> Range(DateTime to, DateTime from);
+    Task<List<TodoItem>> RangeAsync(DateTime to, DateTime from);
 
     TodoItem? Complete(Guid id);
+    Task<TodoItem?> CompleteAsync(Guid id);
 }
