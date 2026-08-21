@@ -215,6 +215,8 @@ public class TodoItemsContext(DbContextOptions<TodoItemsContext> options) : DbCo
     // Ovenfor oversatt vekk fra ekspressions:
     // public async Task<List<TodoItem>> RangeAsync(DateTime to, DateTime from)
     //{
+    //  Vi prøver å finne elementer innenfor et tidsrom. from er lower bound, laveste verdi. to er upper bound, øverste verdi
+    //  Vi må da gjøre en where clause der vi prøver å finne hvilke items som er laget innenfor disse lower og upper bound. 
     //  var found = TodoItems.AsNoTracking().Where(anyItem => anyItem.CreatedAt >= from, anyitem.CreatedAt <= to);
     //  return await found.ToListAsync();
     //
